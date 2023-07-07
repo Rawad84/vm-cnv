@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: trackvms
+  namespace: {{ .Values.namesapce }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: trackvms-rolebinding
+  namespace: {{ .Values.namesapce }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubevirt.io:edit
+subjects:
+- kind: ServiceAccount
+  name: trackvms
+  namespace: {{ .Values.namesapce }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: trackvms
+  namespace: {{ .Values.namesapce }}
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: trackvms-build
+  namespace: {{ .Values.namesapce }}
+spec:
+  source:
+    git:
+      uri: https://github.com/agonzalezrh/cnv-trackvm
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: python:3.8
+  output:
+    to:
+      kind: ImageStreamTag
+      name: trackvms:latest
+  triggers:
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: trackvms 
+spec:
+  replicas: 1
+  selector:
+    app: trackvms
+  template:
+    metadata:
+      labels:
+        app: trackvms
+    spec:
+      serviceAccount: trackvms
+      containers:
+      - name: trackvms
+        image: image-registry.openshift-image-registry.svc:5000/{{ .Values.namesapce }}/trackvms:latest
