@@ -30,6 +30,7 @@ spec:
         kubevirt.io/domain: fedora-3
         kubevirt.io/size: small
     spec:
+      RunStrategy: Always
       domain:
         cpu:
           cores: 1
