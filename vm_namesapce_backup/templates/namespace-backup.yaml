@@ -3,8 +3,6 @@ kind: Backup
 metadata:
   generateName: test-vm-
   namespace: openshift-adp
-  annotations:
-    argocd.argoproj.io/hook: Sync
 spec:
   includedNamespaces:
   - test-vm
