@@ -1,7 +1,7 @@
 apiVersion: velero.io/v1
 kind: Backup
 metadata:
-  generateName: test-vm-
+  generateName: test-vm
   namespace: openshift-adp
 spec:
   includedNamespaces:
