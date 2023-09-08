@@ -1,0 +1,14 @@
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: test-pvc
+spec:
+  source:
+    pvc: 
+      namespace: test-vm
+      name: fedora-3 
+  storage: 
+    resources:
+      requests:
+        storage: 35Gi 
+    storageClassName: ocs-external-storagecluster-ceph-rbd 

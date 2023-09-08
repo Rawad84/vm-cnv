@@ -1,0 +1,40 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  labels:
+    kubevirt.io/vm: vm-dv-clone
+  name: vm-dv-clone 
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: vm-dv-clone
+    spec:
+      domain:
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: rootdisk
+        resources:
+          requests:
+            memory: 2048Mi
+      volumes:
+      - dataVolume:
+          name: favorite-clone1
+        name: rootdisk
+  dataVolumeTemplates:
+  - metadata:
+      name: favorite-clone1
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 35Gi
+      source:
+        pvc:
+          namespace: "test-vm"
+          name: "fedora-g5ft04uktjinacei"

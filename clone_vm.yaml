@@ -1,0 +1,59 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  labels:
+    kubevirt.io/vm: vm-dv-clone
+  name: vm-dv-clone 
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: vm-dv-clone
+    spec:
+      domain:
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: rootdisk
+          - disk:
+              bus: scsi
+            name: disk-top-tiglon 
+        resources:
+          requests:
+            memory: 2048Mi
+      volumes:
+      - dataVolume:
+          name: favorite-clone1
+        name: rootdisk
+      - dataVolume:
+          name: favorite-clone2
+        name: disk-top-tiglon
+  dataVolumeTemplates:
+  - metadata:
+      name: favorite-clone1
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 35Gi
+      source:
+        pvc:
+          namespace: "test-vm"
+          name: "fedora-bhnxsbtjeb48v23g"
+  - metadata:
+      name: favorite-clone2
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 35Gi
+      source:
+        pvc:
+          namespace: "test-vm"
+          name: "fedora-bhnxsbtjeb48v23g-disk-top-tiglon"

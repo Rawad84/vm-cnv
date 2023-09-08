@@ -1,0 +1,11 @@
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  generateName: test-vm-
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+  - test-vm
+  snapshotVolumes: true
+  storageLocation: velero-sample-1
+  ttl: 720h0m0s

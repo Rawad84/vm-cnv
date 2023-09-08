@@ -1,0 +1,145 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  annotations:
+    kubemacpool.io/transaction-timestamp: "2023-08-30T19:49:54.204077678Z"
+    kubevirt.io/latest-observed-api-version: v1
+    kubevirt.io/storage-observed-api-version: v1alpha3
+    vm.kubevirt.io/validations: |
+      [
+        {
+          "name": "minimal-required-memory",
+          "path": "jsonpath::.spec.domain.resources.requests.memory",
+          "rule": "integer",
+          "message": "This VM requires more memory.",
+          "min": 1073741824
+        }
+      ]
+  creationTimestamp: "2023-08-30T19:49:54Z"
+  generation: 1
+  labels:
+    app: fedora-bhnxsbtjeb48v23g
+    vm.kubevirt.io/template: fedora-server-small
+    vm.kubevirt.io/template.namespace: openshift
+    vm.kubevirt.io/template.revision: "1"
+    vm.kubevirt.io/template.version: v0.24.2
+  name: fedora-bhnxsbtjeb48v23g-clone
+  namespace: test-vm
+  resourceVersion: "184528436"
+  uid: e5b6d9fe-0204-4305-b81b-445d3c6b5228
+spec:
+  dataVolumeTemplates:
+  - apiVersion: cdi.kubevirt.io/v1beta1
+    kind: DataVolume
+    metadata:
+      creationTimestamp: null
+      name: fedora-bhnxsbtjeb48v23g-volume-clone
+    spec:
+      sourceRef:
+        kind: DataSource
+        name: fedora
+        namespace: openshift-virtualization-os-images
+      storage:
+        resources:
+          requests:
+            storage: 30Gi
+  - apiVersion: cdi.kubevirt.io/v1beta1
+    kind: DataVolume
+    metadata:
+      creationTimestamp: null
+      name: fedora-bhnxsbtjeb48v23g-disk-top-tiglon-volume-clone
+    spec:
+      source:
+        pvc:
+          name: fedora-bhnxsbtjeb48v23g-disk-top-tiglon
+          namespace: test-vm
+      storage:
+        accessModes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: "32212254720"
+        storageClassName: ocs-external-storagecluster-ceph-rbd
+        volumeMode: Block
+  running: false
+  template:
+    metadata:
+      annotations:
+        vm.kubevirt.io/flavor: small
+        vm.kubevirt.io/os: fedora
+        vm.kubevirt.io/workload: server
+      creationTimestamp: null
+      labels:
+        kubevirt.io/domain: fedora-bhnxsbtjeb48v23g
+        kubevirt.io/size: small
+        vm.kubevirt.io/name: fedora-bhnxsbtjeb48v23g-clone
+    spec:
+      domain:
+        cpu:
+          cores: 1
+          sockets: 1
+          threads: 1
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: rootdisk
+          - disk:
+              bus: virtio
+            name: cloudinitdisk
+          - disk:
+              bus: scsi
+            name: disk-top-tiglon
+          interfaces:
+          - macAddress: 02:95:ca:00:00:07
+            masquerade: {}
+            model: virtio
+            name: default
+          networkInterfaceMultiqueue: true
+          rng: {}
+        features:
+          acpi: {}
+          smm:
+            enabled: true
+        machine:
+          type: pc-q35-rhel8.6.0
+        resources:
+          requests:
+            memory: 2Gi
+      evictionStrategy: LiveMigrate
+      networks:
+      - name: default
+        pod: {}
+      terminationGracePeriodSeconds: 180
+      volumes:
+      - dataVolume:
+          name: fedora-bhnxsbtjeb48v23g-volume-clone
+        name: rootdisk
+      - cloudInitNoCloud:
+          userData: |-
+            #cloud-config
+            user: fedora
+            password: ip5w-tndf-ssca
+            chpasswd: { expire: False }
+        name: cloudinitdisk
+      - dataVolume:
+          hotpluggable: true
+          name: fedora-bhnxsbtjeb48v23g-disk-top-tiglon-volume-clone
+        name: disk-top-tiglon
+status:
+  conditions:
+  - lastProbeTime: "2023-08-30T19:49:58Z"
+    lastTransitionTime: "2023-08-30T19:49:58Z"
+    message: VMI does not exist
+    reason: VMINotExists
+    status: "False"
+    type: Ready
+  printableStatus: Stopped
+  volumeSnapshotStatuses:
+  - enabled: true
+    name: rootdisk
+  - enabled: false
+    name: cloudinitdisk
+    reason: Snapshot is not supported for this volumeSource type [cloudinitdisk]
+  - enabled: true
+    name: disk-top-tiglon
