@@ -4,8 +4,8 @@ metadata:
   name: fedora-3
   namespace: {{ .Values.namespace }}
   annotations: 
-   "helm.sh/hook": pre-install
-   "helm.sh/hook-weight": "-1"
+   "helm.sh/hook": post-install
+   #"helm.sh/hook-weight": "-1"
 spec:
   dataVolumeTemplates:
     - apiVersion: cdi.kubevirt.io/v1beta1
