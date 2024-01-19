@@ -1,9 +1,11 @@
-{{- include "vm-chart.pre-install" . | nindent 2 }}
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
   name: fedora-3
-  namespace: {{ .Values.namesapce }} 
+  namespace: {{ .Values.namespace }}
+  annotations: 
+   "helm.sh/hook": pre-install
+   "helm.sh/hook-weight": "-1"
 spec:
   dataVolumeTemplates:
     - apiVersion: cdi.kubevirt.io/v1beta1
@@ -76,6 +78,6 @@ spec:
             userData: |-
               #cloud-config
               user: fedora
-              password: P@ssw0rs
+              password: P@ssw0rd
               chpasswd: { expire: False }
           name: cloudinitdisk
